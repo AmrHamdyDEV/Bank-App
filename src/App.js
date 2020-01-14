@@ -25,7 +25,7 @@ function App(props) {
     if(!logged){
       props.enqueueSnackbar("Register first to access website", {
         variant: "info",
-      });
+      }); 
       props.history.push('/login')
     }
   },[logged])
