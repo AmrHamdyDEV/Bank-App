@@ -1,39 +1,44 @@
-import React from 'react'
+import React , {useEffect} from 'react'
 import {Container , Grid} from '@material-ui/core'
-import axios from '../../axios'
-const Login = () =>{
-    const handleSubmit = (e) =>{
-        e.preventDefault()
-        let data = new FormData(e.target)
-        for(let fields of data.entries()){
-            console.log(fields)
+import styles from './assets/login.module.sass'
+import {withSnackbar} from 'notistack'
+const Login = (props) =>{
+    useEffect(()=>{
+        if(props.isLogged){
+            props.history.push('/')
         }
-        let accessToken = document.cookie.split(';').find(item => item.trim().startsWith("access_token")).replace('access_token=' , '').trim()
-        console.log(accessToken)
-        axios.post('/login' , data , {headers:{Authorization : `Bearer ${accessToken}` , 'Accept': 'application/json'}}).then(response =>{
-            // This Api dosent really work It's just for example
-        
-        })
-    }
+    },[])
     return(
-        <div>
-            <Container>
-                <form id='login' onSubmit={handleSubmit}>
-                    <Grid container item>
-                        <label>Email</label>
-                        <input name='email' type='text'/>
-                        <input name='username' type='text'/>
+        <Container>
+            <Grid container justify='center' alignItems='center' className={styles.loginContainer}>
+                <form id='login' onSubmit={props.submit} className={styles.form}>
+                    <Grid container className={styles.email}>
+                        <Grid item xs={12}>
+                             <h2>REGISTER</h2>
+                         </Grid>
+                        <Grid item xs={12} md={4}>
+                            <label>Email</label>
+                        </Grid>
+                        <Grid item xs={12} md={8}>
+                            <input name='email' type='text'/>
+                        </Grid>
                     </Grid>
-                    <Grid container item>
-                        <label>Password</label>
-                        <input name='password' type='password'/>
+                    <Grid container className={styles.password}>
+                        <Grid item xs={12} md={4}>
+                            <label>Password</label>
+                        </Grid>
+                        <Grid item xs={12} md={8}>
+                            <input name='password' type='password'/>
+                        </Grid>
                     </Grid>
-                    <Grid container item>
-                        <input type='submit'/>
+                    <Grid container justify='center'>
+                        <Grid item xs={12} className={styles.submit}>
+                            <input type='submit'/>
+                        </Grid>
                     </Grid>
                 </form>
-            </Container>
-        </div>
+            </Grid>
+        </Container>
     )
 }
-export default Login
+export default withSnackbar(Login)

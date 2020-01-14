@@ -1,12 +1,42 @@
-import React from 'react';
+import React , {Component} from 'react';
 import ReactDOM from 'react-dom';
 import {BrowserRouter as Router} from 'react-router-dom'
-import './index.css';
+import './index.sass';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import {SnackbarProvider} from 'notistack';
+import { faSmileWink, faTimes, faFrown, faMeh, faLaugh} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+class Index extends Component{
+    render(){
+        return(
+            <SnackbarProvider className="snackContainer"
+                ref={node => this.snack = node}
+                action={(key) => (
+                    <button className="notificationCloseButton" type="button" onClick={() => this.snack.closeSnackbar(key)}>
+                        <FontAwesomeIcon icon={faTimes} />
+                    </button>
+                )}
+                iconVariant={{
+                success: (<FontAwesomeIcon icon={faSmileWink} /> ),
+                error: (<FontAwesomeIcon icon={faFrown} /> ),
+                warning: (<FontAwesomeIcon icon={faMeh} /> ),
+                info: (<FontAwesomeIcon icon={faLaugh} /> ),
+                }}
+                anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+                }}
+                autoHideDuration={3000}
+                maxSnack={5}>
+                <App />
+            </SnackbarProvider>
+        )
+    }
+}
 ReactDOM.render(
     <Router>
-        <App />
+        <Index />
     </Router>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
