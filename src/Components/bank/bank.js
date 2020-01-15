@@ -2,7 +2,8 @@ import React, {useState, useEffect, Fragment} from 'react'
 import styles from './assets/bank.module.sass'
 import axios from '../../axios'
 import {Container, Grid, Dialog, DialogActions, DialogContent, DialogTitle} from '@material-ui/core'
-const Bank = () =>{
+import {withSnackbar} from 'notistack'
+const Bank = (props) =>{
     const[bankslists,setBankslists] = useState({})
     const [selectedBank, setSelectedBank] = useState({})
     const[loading,setLoading] = useState(true)
@@ -29,10 +30,18 @@ const Bank = () =>{
         });
         var json = JSON.stringify(object)
         let bankName = data.get('name')
-        axios.patch(`/banks/${bankName}.json` , {headers : {data: JSON.stringify(data)}}).then(response => {
+        axios.patch(`/banks/${bankName}.json` , json , {headers : {data: JSON.stringify(data)}}).then(response => {
             let data = response.data
             console.log("data", data)
             setOpen(false)
+            axios.get("/banks.json").then(response => {
+                let data = response.data
+                console.log("data", data)
+                setBankslists(data)
+                props.enqueueSnackbar("Bank Information updated successfully", {
+                    variant: "success",
+                  }); 
+              })
           })
     }
     function openDialog(e, bank){
@@ -99,7 +108,7 @@ const Bank = () =>{
                                         <label className='formDialog'>Status</label>
                                     </Grid>
                                     <Grid item xs={10}>
-                                        <input className='formDialog' name='active' type='text' defaultValue={selectedBank.active}/>
+                                        <input className='formDialog' name='active' type='checkbox' defaultValue={selectedBank.active}/>
                                     </Grid>
                                 </Grid> 
                                 <button type="submit" color="primary">
@@ -120,4 +129,4 @@ const Bank = () =>{
         return null
     }
 }
-export default Bank
+export default withSnackbar(Bank)
