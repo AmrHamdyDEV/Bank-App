@@ -2,8 +2,7 @@ import React, {useState, useEffect} from 'react'
 import './App.sass'
 import Login from './Components/login/login'
 import Bank from './Components/bank/bank'
-import {Route , Switch , withRouter , Redirect} from 'react-router-dom'
-import axios from './axios'
+import {Route , Switch , withRouter} from 'react-router-dom'
 import firebase from './firebase'
 import {withSnackbar} from 'notistack'
 function App(props) {
@@ -29,20 +28,6 @@ function App(props) {
       props.history.push('/login')
     }
   },[logged])
-  useEffect(() => {
-    firebase.database().ref("/banks").on("value", snapshot =>{
-      let data = snapshot.val()
-      console.log(data)
-      // JSON.parse(data)
-    });
-    let token = document.cookie
-    console.log(token)
-    // if(token === ''){
-    //   console.log('not registered')
-    //   props.history.push('/login')
-    // }
-  }, [])
-
   const handleSubmit = (e) =>{
     e.preventDefault()
     let data = new FormData(e.target)
@@ -65,6 +50,7 @@ function App(props) {
   return (
     <div className="App">
       <div className="overlay">
+        {/* <h2>BANK APP</h2> */}
         <Switch>
           <Route exact path="/" component={Bank} />
           <Route exact path="/login" component={() => <Login submit={handleSubmit} {...props} isLogged={logged}/>}/>
@@ -76,3 +62,5 @@ function App(props) {
 }
 
 export default withRouter(withSnackbar(App));
+
+let data = {code: 'cib', name: 'CIB', active: true}

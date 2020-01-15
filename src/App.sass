@@ -1,12 +1,15 @@
 body
     padding: 0
     box-sizing: border-box
-    font-family: serif
 .App
     min-height: 100vh
     background: url('./assets/background.png')
     .overlay
         background: rgba(0,0,0,0.4)
+        & > h2
+            margin: 0
+            text-align: center
+            transform: translateY(70px)
 .notificationCloseButton
     border: none
     background: none
@@ -21,3 +24,7 @@ div.wrongroute
     align-items: center
     font-size: 60px
     color: white
+#form-dialog-title
+    color: #000
+.formDialog
+    color: #000 
