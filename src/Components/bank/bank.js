@@ -8,7 +8,8 @@ const Bank = (props) =>{
     const [selectedBank, setSelectedBank] = useState({})
     const[loading, setLoading] = useState(true)
     const [isOpen, setOpen] = useState(false)
-    const[select,setSelect] = useState([])
+    const[select, setSelect] = useState([])
+    const[accounts, setAccounts] = useState(false)
     function fetchData(){
         axios.get("/banks.json").then(response => {
             let banksArr = []
