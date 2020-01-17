@@ -33,7 +33,7 @@ const Login = (props) =>{
                     </Grid>
                     <Grid container justify='center'>
                         <Grid item xs={12} className={styles.submit}>
-                            <input type='submit'/>
+                            <input type='submit' value='SIGN UP'/>
                         </Grid>
                     </Grid>
                 </form>

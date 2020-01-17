@@ -3,6 +3,7 @@ import styles from './assets/bank.module.sass'
 import axios from '../../axios'
 import {Container, Grid, Dialog, DialogActions, DialogContent, Select ,MenuItem} from '@material-ui/core'
 import {withSnackbar} from 'notistack'
+import Accounts from '../accounts/accounts'
 const Bank = (props) =>{
     const[bankslists, setBankslists] = useState([])
     const [selectedBank, setSelectedBank] = useState({})
@@ -10,6 +11,7 @@ const Bank = (props) =>{
     const [isOpen, setOpen] = useState(false)
     const[select, setSelect] = useState([])
     const[accounts, setAccounts] = useState(false)
+    const[bankIndex, setbankIndex] = useState()
     function fetchData(){
         axios.get("/banks.json").then(response => {
             let banksArr = []
@@ -79,7 +81,6 @@ const Bank = (props) =>{
                 }); 
             })
         }
-        setSelectedBank({})
     }
     function addBank(e){
         setOpen(true)
@@ -109,23 +110,26 @@ const Bank = (props) =>{
                 props.enqueueSnackbar("Bank Deleted Successfully", {
                     variant: "info",
                 }); 
+                setSelectedBank({})
             })
-            setSelectedBank({})
+    }
+    function switchAccounts(e,index){
+        setbankIndex(index)
+        setAccounts(!accounts)
     }
     if(!loading){
         return(
             <div className={styles.banksWrapper}>
                 <Container maxWidth='lg'>
-                    <h2 onClick={addBank} className={styles.add}>Add Bank</h2>
                     <Grid className={styles.head} container justify='center' alignItems='center'>
                         <Grid className={styles.info} item xs={3}>
-                            NAME
+                            BANK NAME
                         </Grid>
                         <Grid className={styles.info} item xs={3}>
-                            CODE
+                            BANK CODE
                         </Grid>
                         <Grid className={styles.info} item xs={3}>
-                            STATUS
+                            BANK STATUS
                         </Grid>
                         <Grid className={styles.info} item xs={3}>
                             ACTIONS
@@ -133,7 +137,7 @@ const Bank = (props) =>{
                     </Grid>
                         {!bankslists.length  ? null: bankslists.map((bank, index) =>{
                             return(
-                                <Grid className={styles.head} container justify='center' alignItems='center' key={bank.id}>
+                                <Grid className={styles.head} container justify='center' alignItems='center' key={bank.id} onClick={e => switchAccounts(e,index,bank)}>
                                     <Grid className={styles.bankData} item xs={3}>
                                         <div>
                                             {bank.name}
@@ -163,6 +167,7 @@ const Bank = (props) =>{
                                             </Select>
                                         </div>
                                     </Grid>
+                                    {(bankIndex === index) && accounts ? <Accounts bankslists={bankslists} index={index}/> : null}
                                 </Grid>
                             )
                         })}
@@ -187,23 +192,41 @@ const Bank = (props) =>{
                                 <DialogContent>
                                     <form onSubmit={handleSubmit}>
                                         <Grid container>
-                                            <Grid item xs={2}>
-                                                <label className='formDialog'>Name</label>
+                                            <Grid item xs={4}>
+                                                <label className= {styles.formDialog}>Bank Name</label>
                                             </Grid>
-                                            <Grid item xs={10}>
-                                                <input className='formDialog' name='name' type='text' defaultValue={selectedBank ? selectedBank.name : null}/>
+                                            <Grid item xs={8}>
+                                                <input className= {styles.formDialog} name='name' type='text' defaultValue={selectedBank ? selectedBank.name : null}/>
                                             </Grid>
-                                            <Grid item xs={2}>
-                                                <label className='formDialog'>Code</label>
+                                            <Grid item xs={4}>
+                                                <label className= {styles.formDialog}>Bank Code</label>
                                             </Grid>
-                                            <Grid item xs={10}>
-                                                <input className='formDialog' name='code' type='text' defaultValue={selectedBank ? selectedBank.code : null}/>
+                                            <Grid item xs={8}>
+                                                <input className= {styles.formDialog} name='code' type='text' defaultValue={selectedBank ? selectedBank.code : null}/>
                                             </Grid>
-                                            <Grid item xs={2}>
-                                                <label className='formDialog'>Status</label>
+                                            <Grid item xs={4}>
+                                                <label className= {styles.formDialog}>Bank Status</label>
                                             </Grid>
-                                            <Grid item xs={10}>
-                                                <input className='formDialog' name='active' type='checkbox' defaultChecked={selectedBank ? selectedBank.active : null}/>
+                                            <Grid item xs={8}>
+                                                <input className= {styles.formDialog} name='active' type='checkbox' defaultChecked={selectedBank ? selectedBank.active : null}/>
+                                            </Grid>
+                                            <Grid item xs={4}>
+                                                <label className= {styles.formDialog} >Account No.</label>
+                                            </Grid>
+                                            <Grid item xs={8}>
+                                                <input className= {styles.formDialog} name='accountNo' type='number' defaultValue={selectedBank ? selectedBank.accountNo : null}/>
+                                            </Grid>
+                                            <Grid item xs={4}>
+                                                <label className= {styles.formDialog}>Account Code</label>
+                                            </Grid>
+                                            <Grid item xs={8}>
+                                                <input className= {styles.formDialog} name='accountCode' type='text' defaultValue={selectedBank ? selectedBank.accountCode : null}/>
+                                            </Grid>
+                                            <Grid item xs={4}>
+                                                <label className= {styles.formDialog}>Account Status</label>
+                                            </Grid>
+                                            <Grid item xs={8}>
+                                                <input className= {styles.formDialog} name='accountStatus' type='checkbox' defaultChecked={selectedBank ? selectedBank.accountStatus : null}/>
                                             </Grid>
                                             <input type="hidden" name="index" value={selectedBank.index || ''} />
                                         </Grid> 
@@ -220,6 +243,7 @@ const Bank = (props) =>{
                             </Fragment>
                         }
                         </Dialog>
+                        <h2 onClick={addBank} className={styles.add}>+ New Bank</h2>
                 </Container>
             </div>
         )
