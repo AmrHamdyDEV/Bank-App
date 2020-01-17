@@ -4,6 +4,7 @@ import axios from '../../axios'
 import {Container, Grid, Dialog, DialogActions, DialogContent, Select ,MenuItem} from '@material-ui/core'
 import {withSnackbar} from 'notistack'
 import Accounts from '../accounts/accounts'
+import { Redirect } from 'react-router-dom'
 const Bank = (props) =>{
     const[bankslists, setBankslists] = useState([])
     const [selectedBank, setSelectedBank] = useState({})
@@ -117,7 +118,7 @@ const Bank = (props) =>{
         setbankIndex(index)
         setAccounts(!accounts)
     }
-    if(!loading){
+    if(!loading && props.isAuth){
         return(
             <div className={styles.banksWrapper}>
                 <Container maxWidth='lg'>

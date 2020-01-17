@@ -9,15 +9,16 @@ function App(props) {
   const[logged,setLogged] = useState(true)
   const[email,setEmail] = useState('')
   const[password,setPassword] =useState('')
+  const[auth, setAuth] = useState(false)
   firebase.auth().onAuthStateChanged(function(user) {
       let accessToken = user ? user.refreshToken : null
     if (user) {
       setLogged(true)
+      setAuth(true)
       document.cookie = `token=${accessToken} SameSite=lax; max-age=${ 60 * 60 * 24 * 365}`
       console.log('signed')
     } else {
       setLogged(false)
-      // console.log('error')
     }
   });
   useEffect(()=>{
@@ -28,7 +29,7 @@ function App(props) {
       props.history.push('/login')
     }
   },[logged])
-  const handleSubmit = (e) =>{
+  function handleSubmit(e){
     e.preventDefault()
     let data = new FormData(e.target)
     setEmail(data.get('email'))
@@ -39,6 +40,7 @@ function App(props) {
         variant: "success",
       });
       setLogged(true)
+      setAuth(true)
       props.history.push('/')
     }).catch(function(error) {
       console.log(error)
@@ -47,14 +49,27 @@ function App(props) {
       });
     })
   }
+  function signOut(){
+    firebase.auth().signOut().then(function(response) {
+      console.log(response)
+      props.enqueueSnackbar('Signesd out Successfully', {
+        variant: "success",
+      });
+      }).catch(function(error) {
+      props.enqueueSnackbar(error.message ? error.message : "something went wrong", {
+        variant: "error",
+      });
+    });
+  }
   return (
     <div className="App">
       <div className="overlay">
-        {/* <h2>BANK APP</h2> */}
+        <p className='logout' onClick={signOut}>LOG OUT</p>
+        {/* <Bank isAuth={auth}/> */}
         <Switch>
-          <Route exact path="/" component={Bank} />
-          <Route exact path="/login" component={() => <Login submit={handleSubmit} {...props} isLogged={logged}/>}/>
-          <Route render={() => <div className='wrongroute'>404</div>} />
+          <Route exact path="/" render={() => <Bank {...props} isAuth={auth}/>} />
+          <Route exact path="/login" render={() => <Login submit={handleSubmit} {...props} isLogged={logged}/>}/>
+          {/* <Route render={() => <div className='wrongroute'>404</div>} /> */}
         </Switch>
       </div>
     </div>
