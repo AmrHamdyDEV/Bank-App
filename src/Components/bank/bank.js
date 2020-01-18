@@ -31,7 +31,7 @@ const Bank = (props) =>{
           })
     }
     useEffect(()=>{
-        if(props.isAuth && !loading){
+        if(props.isAuth){
             setFetch(true)
         }
         return () => {setFetch(false)}
