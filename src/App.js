@@ -69,7 +69,8 @@ function App(props) {
   function signOut(){
     firebase.auth().signOut().then(function(response) {
       console.log(response)
-      props.enqueueSnackbar('Signesd out Successfully', {
+      setAuth(false)
+      props.enqueueSnackbar('Signed out Successfully', {
         variant: "success",
       });
       }).catch(function(error) {
