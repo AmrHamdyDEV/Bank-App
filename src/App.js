@@ -10,6 +10,7 @@ function App(props) {
   const[email,setEmail] = useState('')
   const[password,setPassword] =useState('')
   const[auth, setAuth] = useState(false)
+  const[register, setRegister]= useState(true)
   firebase.auth().onAuthStateChanged(function(user) {
       let accessToken = user ? user.refreshToken : null
     if (user) {
@@ -28,27 +29,43 @@ function App(props) {
       }); 
       props.history.push('/login')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   },[logged])
   function handleSubmit(e){
     e.preventDefault()
     let data = new FormData(e.target)
     setEmail(data.get('email'))
     setPassword(data.get('password'))
-    console.log("submit")
-    firebase.auth().createUserWithEmailAndPassword(data.get('email'), data.get('password')).then(response =>{
-      props.enqueueSnackbar("Registered Successfully", {
-        variant: "success",
-      });
-      setLogged(true)
-      setAuth(true)
-      props.history.push('/')
-    }).catch(function(error) {
-      console.log(error)
-      props.enqueueSnackbar(error.message ? error.message : "Something went wrong", {
-        variant: "error",
-      });
-    })
-  }
+    if(register){
+      console.log('registered')
+      firebase.auth().createUserWithEmailAndPassword(data.get('email'), data.get('password')).then(response =>{
+        props.enqueueSnackbar("Registered Successfully", {
+          variant: "success",
+        });
+        setLogged(true)
+        setAuth(true)
+        props.history.push('/')
+      }).catch(function(error) {
+        console.log(error)
+        props.enqueueSnackbar(error.message ? error.message : "Something went wrong", {
+          variant: "error",
+        });
+      })
+      }else{
+        console.log('login')
+        firebase.auth().signInWithEmailAndPassword(email, password).then(response=>{
+          props.enqueueSnackbar("login Successfully", {
+            variant: "success",
+          });
+          setAuth(true)
+          props.history.push('/')
+        }).catch(function(error) {
+          props.enqueueSnackbar(error.message ? error.message : "Something went wrong", {
+            variant: "error",
+          });
+        });
+      }
+    }
   function signOut(){
     firebase.auth().signOut().then(function(response) {
       console.log(response)
@@ -61,15 +78,17 @@ function App(props) {
       });
     });
   }
+  function registerHandle(){
+    setRegister(!register)
+}
   return (
     <div className="App">
       <div className="overlay">
-        <p className='logout' onClick={signOut}>LOG OUT</p>
-        {/* <Bank isAuth={auth}/> */}
+        {auth ? <p className='logout' onClick={signOut}>LOG OUT</p> : null}
         <Switch>
           <Route exact path="/" render={() => <Bank {...props} isAuth={auth}/>} />
-          <Route exact path="/login" render={() => <Login submit={handleSubmit} {...props} isLogged={logged}/>}/>
-          {/* <Route render={() => <div className='wrongroute'>404</div>} /> */}
+          <Route exact path="/login" render={() => <Login submit={handleSubmit} {...props} isLogged={logged} registerHandle={registerHandle} register={register}/>} />
+          <Route render={() => <div className='wrongroute'>404</div>} />
         </Switch>
       </div>
     </div>
@@ -77,5 +96,3 @@ function App(props) {
 }
 
 export default withRouter(withSnackbar(App));
-
-let data = {code: 'cib', name: 'CIB', active: true}

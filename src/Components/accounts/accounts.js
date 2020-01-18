@@ -9,7 +9,8 @@ const Accounts = (props) =>{
         let index = props.index
         let selectedAccount = bankslists[index]
         setAccount(selectedAccount)
-    },[])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[props.bankslists])
     return(
         <Container maxWidth='md' className={styles.accountWrapper}>
             <Grid className={styles.head} container justify='center' alignItems='center'>

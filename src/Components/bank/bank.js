@@ -4,7 +4,6 @@ import axios from '../../axios'
 import {Container, Grid, Dialog, DialogActions, DialogContent, Select ,MenuItem} from '@material-ui/core'
 import {withSnackbar} from 'notistack'
 import Accounts from '../accounts/accounts'
-import { Redirect } from 'react-router-dom'
 const Bank = (props) =>{
     const[bankslists, setBankslists] = useState([])
     const [selectedBank, setSelectedBank] = useState({})
@@ -13,6 +12,7 @@ const Bank = (props) =>{
     const[select, setSelect] = useState([])
     const[accounts, setAccounts] = useState(false)
     const[bankIndex, setbankIndex] = useState()
+    const [fetch , setFetch] = useState(false)
     function fetchData(){
         axios.get("/banks.json").then(response => {
             let banksArr = []
@@ -27,13 +27,21 @@ const Bank = (props) =>{
             for(let i = 0; i < banksArr.length; i++){
                 newSelect.push("default")
             }
-            console.log(newSelect)
             setSelect(newSelect)
           })
     }
     useEffect(()=>{
-        fetchData()
-    },[])
+        if(props.isAuth && !loading){
+            setFetch(true)
+        }
+        return () => {setFetch(false)}
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[props.isAuth])
+    useEffect(()=>{
+        if(fetch){
+            fetchData()
+        }
+    },[fetch])
     useEffect(()=>{
         setLoading(false)
     },[bankslists])
